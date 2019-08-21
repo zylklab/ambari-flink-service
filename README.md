@@ -19,3 +19,15 @@
 ### BUG
 * Cluster must be kerberized
 * Stopping from Ambari NOT kill the YARN application
+
+### TODO LIST
+
+ * Stop the service ```yarn -kill application```
+ * Cluster without kerberos enabled
+ * Templates for log4j
+ * Set the JDK from cluster env var
+ * Send metrics to ambari metrics collector
+ * Check the flink status ```ỳarn -list```
+ * Quicklinks
+ * define alarms based on statistics alarms.json
+ * Satistics panels

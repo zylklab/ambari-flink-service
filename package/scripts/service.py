@@ -54,10 +54,18 @@ def service(name, action='start'):
 	cmd_open = subprocess.Popen(
 	    ["hadoop", "classpath"], stdout=subprocess.PIPE, stderr=subprocess.PIPE)
 	hadoop_classpath = cmd_open.communicate()[0].strip()
-	cmd = format("export HADOOP_CONF_DIR={hadoop_conf_dir}; export HADOOP_CLASSPATH={hadoop_classpath}; {flink_bin_dir}/yarn-session.sh -n {flink_numcontainers} -s {flink_numberoftaskslots} -jm {flink_jobmanager_memory} -tm {flink_container_memory} -qu {flink_queue} -nm {flink_appname} -d")
-	cmd = format("{cmd} &\n echo $! > {pid_file}")
+	cmd = format("export HADOOP_CONF_DIR={hadoop_conf_dir}; export HADOOP_CLASSPATH={hadoop_classpath}; /opt/flink/bin/yarn-session.sh -n {flink_numcontainers} -s {flink_numberoftaskslots} -jm {flink_jobmanager_memory} -tm {flink_container_memory} -qu {flink_queue} -nm {flink_appname} -d")
+	# cmd = format("{cmd} &\n echo $! > {pid_file}")
+	# not background for debugging
+	cmd = format("{cmd} \n echo $! > {pid_file}")
 	Execute(cmd, not_if=no_op_test, user=params.flink_user,
 	        path=params.flink_bin_dir)
+	# Execute(cmd, not_if=no_op_test, user=params.flink_user)
+
+	Logger.info('********************************')
+        Logger.info('* Starting *********************')
+        Logger.info('********************************')
+	
 	File(pid_file, owner = params.flink_user, group = params.user_group)
 
   elif action == "stop":

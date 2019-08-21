@@ -36,7 +36,15 @@ def replace_jaas_placeholder(name, security_enabled, conf_dir):
   else:
     return name
 
-flink_yaml_template = """{% for key, value in configurations|dictsort if not key.startswith('_') %}{{key}} : {{ escape_yaml_property(replace_jaas_placeholder(resource_management.core.source.InlineTemplate(value).get_content().strip(), security_enabled, conf_dir)) }}
+#flink_yaml_template = """{% for key, value in configurations|dictsort if not key.startswith('_') %}{{key}} : {{ escape_yaml_property(replace_jaas_placeholder(resource_management.core.source.InlineTemplate(value).get_content().strip(), security_enabled, conf_dir)) }}
+#{% endfor %}"""
+
+# TODO: replace else with elif (original if = if not key.startswith('_'))
+# quitado escape_yaml_property porque con comillas simples no coge bien los parametros string (keytab y principal)
+flink_yaml_template = """{% for key, value in configurations|dictsort %}
+{% if key=='content' %} {{ resource_management.core.source.InlineTemplate(value).get_content().strip() }} 
+{% else %}{{key}} : {{ replace_jaas_placeholder(resource_management.core.source.InlineTemplate(value).get_content().strip(), security_enabled, conf_dir) }}
+{% endif %}
 {% endfor %}"""
 
 def yaml_config_template(configurations):

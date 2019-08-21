@@ -61,7 +61,7 @@ def flink(name=None):
   
   configurations = params.config['configurations']['flink-site']
 
-  File(format("{conf_dir}/flink.yaml"),
+  File(format("{conf_dir}/flink-conf.yaml"),
        content=yaml_config_template(configurations),
        owner=params.flink_user,
        group=params.user_group

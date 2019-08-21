@@ -105,7 +105,7 @@ dfs_type = default("/clusterLevelParams/dfs_type", "")
 
 # params from flink-ambari-config
 flink_install_dir = "/opt/flink"
-flink_bin_dir = "/opt/flink/bin"
+flink_bin_dir = "/opt/flink"
 flink_numcontainers = config['configurations']['flink-site']['flink_numcontainers']
 flink_numberoftaskslots= config['configurations']['flink-site']['flink_numberoftaskslots']
 flink_jobmanager_memory = config['configurations']['flink-site']['flink_jobmanager_memory']

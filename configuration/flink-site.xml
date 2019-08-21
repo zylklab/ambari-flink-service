@@ -14,7 +14,7 @@
 <configuration supports_final="true">
 
 	<property>
-		<name>taskmanager.tmp.dirs: /tmp</name>
+		<name>taskmanager.tmp.dirs</name>
 		<display-name>Flink task manager temporary directory</display-name>
 		<value>/tmp</value>
 		<description>A directory on the local filesystem used by Flink
@@ -118,121 +118,109 @@
 		<description>This is the jinja template for flink-conf.yaml file
 		</description>
 		<value>
-			#==============================================================================
-			# Common
-			#==============================================================================
 
-			jobmanager.rpc.address: localhost
+#==============================================================================
+# Common
+#==============================================================================
 
-			#jobmanager.rpc.port: 6123
+jobmanager.rpc.address: localhost
+#jobmanager.rpc.port: 6123
+jobmanager.heap.mb: 256
+taskmanager.heap.mb: 512
+taskmanager.numberOfTaskSlots: 1
+#parallelism.default: 1
 
-			jobmanager.heap.mb: 256
+#==============================================================================
+# Web Frontend
+#==============================================================================
+# The port under which the web-based runtime monitor listens.
+# A value of -1 deactivates the web server.
+jobmanager.web.port: 8081
 
-			taskmanager.heap.mb: 512
+# The port uder which the standalone web client
+# (for job upload and submit) listens.
+webclient.port: 8080
 
-			taskmanager.numberOfTaskSlots: 1
+#==============================================================================
+# Streaming state checkpointing
+#==============================================================================
 
-			#parallelism.default: 1
+# The backend that will be used to store operator state checkpoints if
+# checkpointing is enabled.
+#
+# Supported backends: jobmanager, filesystem
+state.backend: jobmanager
 
-			#==============================================================================
-			# Web Frontend
-			#==============================================================================
-			# The port under which the web-based runtime monitor listens.
-			# A
-			value of -1 deactivates the web server.
-			jobmanager.web.port: 8081
+# Directory for storing checkpoints in a flink supported filesystem
+# Note: State backend must be accessible from the JobManager, use file://
+# only for local setups.
+#
+# state.backend.fs.checkpointdir: hdfs://checkpoints
 
-			# The
-			port uder which the standalone web client
-			# (for job upload and
-			submit) listens.
+#==============================================================================
+# Advanced
+#==============================================================================
+# The number of buffers for the network stack.
+#
+#
+taskmanager.network.numberOfBuffers: 2048
 
-			webclient.port: 8080
+# Directories for temporary files.
+#
+# Add a delimited list for multiple directories, using the system directory
+# delimiter (colon ':' on unix) or a comma, e.g.:
+# /data1/tmp:/data2/tmp:/data3/tmp
+#
+# Note: Each directory entry is read from and written to by a different I/O 
+# thread. You can include the same directory multiple times in order to create
+# multiple I/O threads against that directory. This is for example relevant for
+# high-throughput RAIDs.
+#
+# If not specified, the system-specific Java temporary directory (java.io.tmpdir
+# property) is taken.
+#
+#
+taskmanager.tmp.dirs: /tmp
 
-			#==============================================================================
-			# Streaming state checkpointing
-			#==============================================================================
+# Path to the Hadoop configuration directory.
+#
+# This configuration is used when writing into HDFS. Unless specified otherwise,
+# HDFS file creation will use HDFS default settings with respect to block-size,
+# replication factor, etc.
+#
+# You can also directly specify the paths to hdfs-default.xml and hdfs-site.xml 
+# via keys 'fs.hdfs.hdfsdefault' and 'fs.hdfs.hdfssite'.
+#
+# fs.hdfs.hadoopconf: /path/to/hadoop/conf/
+# env.java.home: /usr/jdk64/jdk1.8.0_112
+# taskmanager.memory.fraction: 0.6
+# env.java.opts: -XX:+UseG1GC
 
-			# The backend that will be used to store operator state checkpoints
-			if
-			# checkpointing is enabled.
-			#
-			# Supported backends: jobmanager,
-			filesystem
-
-			state.backend: jobmanager
-
-			# Directory for storing
-			checkpoints in a flink supported filesystem
-			# Note: State backend must
-			be accessible from the JobManager, use
-			file://
-			# only for local setups.
-			#
-			# state.backend.fs.checkpointdir: hdfs://checkpoints
-
-			#==============================================================================
-			# Advanced
-			#==============================================================================
-			# The number of buffers for the network stack.
-			#
-			#
-			taskmanager.network.numberOfBuffers: 2048
-
-			# Directories for temporary
-			files.
-			#
-			# Add a delimited list for multiple directories, using the
-			system
-			directory
-			# delimiter (colon ':' on unix) or a comma, e.g.:
-			#
-			/data1/tmp:/data2/tmp:/data3/tmp
-			#
-			# Note: Each directory entry is read
-			from and written to by a
-			different I/O
-			# thread. You can include the
-			same directory multiple times in order
-			to create
-			# multiple I/O threads
-			against that directory. This is for example
-			relevant for
-			#
-			high-throughput RAIDs.
-			#
-			# If not specified, the system-specific Java
-			temporary directory
-			(java.io.tmpdir
-			# property) is taken.
-			#
-			#
-			taskmanager.tmp.dirs: /tmp
-
-			# Path to the Hadoop configuration
-			directory.
-			#
-			# This configuration is used when writing into HDFS.
-			Unless specified
-			otherwise,
-			# HDFS file creation will use HDFS default
-			settings with respect to
-			block-size,
-			# replication factor, etc.
-			#
-			# You
-			can also directly specify the paths to hdfs-default.xml and
-			hdfs-site.xml
-			# via keys 'fs.hdfs.hdfsdefault' and 'fs.hdfs.hdfssite'.
-			#
-			# fs.hdfs.hadoopconf: /path/to/hadoop/conf/
-			env.java.home: /usr/jdk64/jdk1.8.0_77/jre
-			taskmanager.memory.fraction: 0.6
-			env.java.opts: -XX:+UseG1GC
 		</value>
 		<value-attributes>
 			<type>content</type>
 		</value-attributes>
 		<on-ambari-upgrade add="true" />
 	</property>
+        <property>
+                <name>security.kerberos.login.principal</name>
+                <description>Flink principal name</description>
+                <property-type>KERBEROS_PRINCIPAL</property-type>
+                <value>flink</value>
+                <on-ambari-upgrade add="true" />
+        </property>
+        <property>
+                <name>security.kerberos.login.keytab</name>
+                <description>Flink keytab path</description>
+                <value>/etc/security/keytabs/flink.keytab</value>
+                <on-ambari-upgrade add="true" />
+        </property>
+
+        <property>
+                <name>env.java.home</name>
+                <description>Env Java home</description>
+                <value>/usr/jdk64/jdk1.8.0_112</value>
+                <on-ambari-upgrade add="true" />
+        </property>
+
 </configuration>

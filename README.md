@@ -19,3 +19,4 @@
 ### BUG
 * Cluster must be kerberized
 * Stopping from Ambari NOT kill the YARN application
+

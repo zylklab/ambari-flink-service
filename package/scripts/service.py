@@ -55,12 +55,15 @@ def service(name, action='start'):
 	    ["hadoop", "classpath"], stdout=subprocess.PIPE, stderr=subprocess.PIPE)
 	hadoop_classpath = cmd_open.communicate()[0].strip()
 	cmd = format("export HADOOP_CONF_DIR={hadoop_conf_dir}; export HADOOP_CLASSPATH={hadoop_classpath}; /opt/flink/bin/yarn-session.sh -n {flink_numcontainers} -s {flink_numberoftaskslots} -jm {flink_jobmanager_memory} -tm {flink_container_memory} -qu {flink_queue} -nm {flink_appname} -d")
-	# cmd = format("{cmd} &\n echo $! > {pid_file}")
-	# not background for debugging
-	cmd = format("{cmd} \n echo $! > {pid_file}")
+	#cmd = format("{cmd} &\n echo $! > {pid_file}")
+	# write yarn application id in pid_file
+	Execute(cmd, not_if=no_op_test, user=params.flink_user,
+                path=params.flink_bin_dir)
+	# TODO: parametrizar flinkapp-from-ambari?
+	# TODO: si existen dos application de flinkapp-from-ambari funciona??
+	cmd = format("yarn application -list | grep flinkapp-from-ambari | cut -f1 > {pid_file}")
 	Execute(cmd, not_if=no_op_test, user=params.flink_user,
 	        path=params.flink_bin_dir)
-	# Execute(cmd, not_if=no_op_test, user=params.flink_user)
 
 	Logger.info('********************************')
         Logger.info('* Starting *********************')
@@ -71,11 +74,21 @@ def service(name, action='start'):
   elif action == "stop":
 	process_dont_exist = format("! ({no_op_test})")
 	if os.path.exists(pid_file):
-		pid = get_user_call_output.get_user_call_output(format("! test -f {pid_file} ||  cat {pid_file}"), user=params.flink_user)[1]
+		
+		#pid = get_user_call_output.get_user_call_output(format("! test -f {pid_file} ||  cat {pid_file}"), user=params.flink_user)[1]
 		# if multiple processes are running (for example user can start logviewer from console)
 		# there can be more than one id
+		#pid = pid.replace("\n", " ")
+		#Execute(format("{sudo} kill {pid}"), not_if = process_dont_exist)
+		#Execute(format("{sudo} kill -9 {pid}"),
+		#not_if = format("sleep 2; {process_dont_exist} || sleep 20; {process_dont_exist}"),ignore_failures = True)
+		#File(pid_file, action = "delete")
+		
+		pid = get_user_call_output.get_user_call_output(format("! test -f {pid_file} ||  cat {pid_file}"), user=params.flink_user)[1]
 		pid = pid.replace("\n", " ")
-		Execute(format("{sudo} kill {pid}"), not_if = process_dont_exist)
-		Execute(format("{sudo} kill -9 {pid}"),
-		not_if = format("sleep 2; {process_dont_exist} || sleep 20; {process_dont_exist}"),ignore_failures = True)
+		# TODO: fixed launch correct command, never ends
+		# Execute(format("yarn application -kill {pid}"), not_if = False)
+		cmd = format("yarn application -kill {pid}")
+		Execute(cmd, not_if=False, user=params.flink_user)
 		File(pid_file, action = "delete")
+

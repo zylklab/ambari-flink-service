@@ -216,11 +216,14 @@ taskmanager.tmp.dirs: /tmp
                 <on-ambari-upgrade add="true" />
         </property>
 
+
         <property>
                 <name>env.java.home</name>
                 <description>Env Java home</description>
-                <value>/usr/jdk64/jdk1.8.0_112</value>
+                <!-- <value>/usr/jdk64/jdk1.8.0_112</value> -->
+		<value>{{java64_home}}</value>
                 <on-ambari-upgrade add="true" />
         </property>
+
 
 </configuration>

@@ -84,6 +84,8 @@ if security_enabled:
   flink_jaas_principal = _flink_principal_name.replace('_HOST',_hostname_lowercase)
   _ambari_principal_name = default('/configurations/cluster-env/ambari_principal_name', None)
   flink_keytab_path = config['configurations']['flink-env']['flink_keytab']
+  flink_kerberos_keytab = config['configurations']['flink-site']['security.kerberos.login.keytab']
+  flink_kerberos_principal = config['configurations']['flink-site']['security.kerberos.login.principal']
 
   if _ambari_principal_name:
     ambari_bare_jaas_principal = get_bare_principal(_ambari_principal_name)

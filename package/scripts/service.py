@@ -56,17 +56,19 @@ def service(name, action='start'):
 	hadoop_classpath = cmd_open.communicate()[0].strip()
 	cmd = format("export HADOOP_CONF_DIR={hadoop_conf_dir}; export HADOOP_CLASSPATH={hadoop_classpath}; /opt/flink/bin/yarn-session.sh -n {flink_numcontainers} -s {flink_numberoftaskslots} -jm {flink_jobmanager_memory} -tm {flink_container_memory} -qu {flink_queue} -nm {flink_appname} -d")
 	#cmd = format("{cmd} &\n echo $! > {pid_file}")
+	#cmd = format("{cmd} && yarn application -list | grep {flink_appname} | cut -f1 > {pid_file}")
 	# write yarn application id in pid_file
 	Execute(cmd, not_if=no_op_test, user=params.flink_user,
                 path=params.flink_bin_dir)
-	# TODO: parametrizar flinkapp-from-ambari?
-	# TODO: si existen dos application de flinkapp-from-ambari funciona??
-	cmd = format("yarn application -list | grep flinkapp-from-ambari | cut -f1 > {pid_file}")
-	Execute(cmd, not_if=no_op_test, user=params.flink_user,
-	        path=params.flink_bin_dir)
-
 	Logger.info('********************************')
-        Logger.info('* Starting *********************')
+        Logger.info('* Flink Started *********************')
+        Logger.info('********************************')
+	# TODO: parametrizar keytab
+	# TODO: si existen dos application de flink_appname funciona??
+	cmd2 = format("kinit -kt {flink_kerberos_keytab} {flink_kerberos_principal}; yarn app -list | grep {flink_appname} | cut -f1 > {pid_file}")
+	Execute(cmd2, not_if=no_op_test, user=params.flink_user)
+	Logger.info('********************************')
+        Logger.info('* Pid saved *********************')
         Logger.info('********************************')
 	
 	File(pid_file, owner = params.flink_user, group = params.user_group)
@@ -86,9 +88,8 @@ def service(name, action='start'):
 		
 		pid = get_user_call_output.get_user_call_output(format("! test -f {pid_file} ||  cat {pid_file}"), user=params.flink_user)[1]
 		pid = pid.replace("\n", " ")
-		# TODO: fixed launch correct command, never ends
-		# Execute(format("yarn application -kill {pid}"), not_if = False)
-		cmd = format("yarn application -kill {pid}")
+		#TODO: parametrizar keytab
+		cmd = format("kinit -kt {flink_kerberos_keytab} {flink_kerberos_principal}; yarn application -kill {pid}")
 		Execute(cmd, not_if=False, user=params.flink_user)
 		File(pid_file, action = "delete")
 

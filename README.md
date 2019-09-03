@@ -27,3 +27,4 @@
  * Quicklinks
  * define alarms based on statistics alarms.json
  * Satistics panels
+ * Add kdestroy or check command yarn with keytab

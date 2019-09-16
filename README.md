@@ -10,6 +10,8 @@
 5. Compress *flink/* with tar.gz 
 6. Put in *./package/files/flink-bin-1.8.1/flink.tar.gz*
 
+**There is a copy ot this jar at [https://services.zylk.net/ambari/flink.tar.gz](https://services.zylk.net/ambari/flink.tar.gz)**
+
 ### Set up Advanced flink-site 
 
 * **security.kerberos.login.keytab** set your kerberos keytab

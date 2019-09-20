@@ -50,6 +50,7 @@
 		</value-attributes>
 		<on-ambari-upgrade add="true" />
 	</property>
+	<!--
 	<property>
 		<name>flink_principal_name</name>
 		<description>Flink principal name</description>
@@ -63,6 +64,7 @@
 		<value>/etc/security/keytabs/flink.service.keytab</value>
 		<on-ambari-upgrade add="true" />
 	</property>
+        -->
 	<property>
 		<name>hadoop_conf_dir</name>
 		<display-name>Haddop conf path</display-name>

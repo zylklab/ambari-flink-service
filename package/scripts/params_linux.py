@@ -80,10 +80,10 @@ security_enabled = config['configurations']['cluster-env']['security_enabled']
 
 if security_enabled:
   _hostname_lowercase = config['agentLevelParams']['hostname'].lower()
-  _flink_principal_name = config['configurations']['flink-env']['flink_principal_name']
-  flink_jaas_principal = _flink_principal_name.replace('_HOST',_hostname_lowercase)
+  #_flink_principal_name = config['configurations']['flink-env']['flink_principal_name']
+  #flink_jaas_principal = _flink_principal_name.replace('_HOST',_hostname_lowercase)
   _ambari_principal_name = default('/configurations/cluster-env/ambari_principal_name', None)
-  flink_keytab_path = config['configurations']['flink-env']['flink_keytab']
+  #flink_keytab_path = config['configurations']['flink-env']['flink_keytab']
   flink_kerberos_keytab = config['configurations']['flink-site']['security.kerberos.login.keytab']
   flink_kerberos_principal = config['configurations']['flink-site']['security.kerberos.login.principal']
 
